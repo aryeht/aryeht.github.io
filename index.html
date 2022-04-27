@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <script src="./pyodide.js"></script>
+      <script src="./palisade/palisade_pke.js"></script>
+  </head>
+  <body>
+    Pyodide test page <br>
+    Open your browser console to see Pyodide output
+    <script type="text/javascript">
+      async function main(){
+        globalThis.pyodide = await loadPyodide();
+        await pyodide.loadPackage(['micropip', 'numpy', 'pandas']);  // AH
+        globalThis.palisade_pke = await Module(); // AH
+        let namespace = pyodide.globals.get("dict")();
+        console.log(pyodide.runPython(`
+            import sys
+            sys.version
+            import pandas as pd
+            import numpy as np
+            from pyodide import to_js
+            print(np.NaN)
+
+
+            from js import palisade_pke
+
+            plaintextModulus = 65537
+            sigma = 3.2
+            depth = 2
+
+            # Instantiate the crypto context
+            cryptoContext = palisade_pke.GenCryptoContextBFVrns(plaintextModulus, palisade_pke.SecurityLevel.HEStd_128_classic, sigma, 0, depth, 0, palisade_pke.MODE.OPTIMIZED)
+
+            # Enable features that you wish to use
+            cryptoContext.Enable(palisade_pke.PKESchemeFeature.ENCRYPTION)
+            cryptoContext.Enable(palisade_pke.PKESchemeFeature.SHE)
+
+            # Generate a public/private key pair
+            keyPair = cryptoContext.KeyGen()
+
+            print('keyPair.secretKey.GetKeyTag()')
+            print(keyPair.secretKey.GetKeyTag())
+            print('keyPair.secretKey.GetCryptoParameters()')
+            print(keyPair.secretKey.GetCryptoParameters())
+            print('keyPair.secretKey.GetCryptoContext()')
+            print(keyPair.secretKey.GetCryptoContext())
+
+            print(dir(keyPair.secretKey))
+
+
+            # Generate the relinearization key
+            cryptoContext.EvalMultKeyGen(keyPair.secretKey)
+
+
+            # Generate the rotation evaluation keys
+            cryptoContext.EvalAtIndexKeyGen(keyPair.secretKey, [1, 2, -1, -2])
+
+        `));
+        console.log(pyodide.runPython("print(1 + 2)"));
+      }
+      main();
+    </script>
+  </body>
+</html>
