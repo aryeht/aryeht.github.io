@@ -19,7 +19,6 @@
             import pandas as pd
             import numpy as np
             from pyodide import to_js
-            print(np.NaN)
 
 
             from js import palisade_pke
@@ -38,19 +37,15 @@
             # Generate a public/private key pair
             keyPair = cryptoContext.KeyGen()
 
-            print('keyPair.secretKey.GetKeyTag()')
+            print('keyPair.secretKey.GetKeyTag():')
             print(keyPair.secretKey.GetKeyTag())
-            print('keyPair.secretKey.GetCryptoParameters()')
+            print('keyPair.secretKey.GetCryptoParameters():')
             print(keyPair.secretKey.GetCryptoParameters())
-            print('keyPair.secretKey.GetCryptoContext()')
+            print('keyPair.secretKey.GetCryptoContext():')
             print(keyPair.secretKey.GetCryptoContext())
-
-            print(dir(keyPair.secretKey))
-
 
             # Generate the relinearization key
             cryptoContext.EvalMultKeyGen(keyPair.secretKey)
-
 
             # Generate the rotation evaluation keys
             cryptoContext.EvalAtIndexKeyGen(keyPair.secretKey, [1, 2, -1, -2])
