@@ -45,8 +45,6 @@
               res = await fut
               if res is not None:
                 builtins._ = res
-              print('fut:', fut)
-              print('before to_js, res = ', res)
               return to_js([res], depth=10) # AH hmmm
             def clear_console():
               pyconsole.buffer = []

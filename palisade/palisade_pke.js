@@ -4498,6 +4498,9 @@ function __embind_register_integer(primitiveType, name, size, minRange, maxRange
   };
  } else {
   toWireType = function(destructors, value) {
+   if (value === undefined && this.name == "int") {
+    return 0;
+   }
    checkAssertions(value, this.name);
    return value;
   };
