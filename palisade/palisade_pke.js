@@ -1982,7 +1982,7 @@ function setValue(ptr, value, type, noSafe) {
   break;
 
  case "i64":
-  tempI64 = [ value >>> 0, (tempDouble = value, +Math.abs(tempDouble) >= 1 ? tempDouble > 0 ? (Math.min(+Math.floor(tempDouble / 4294967296), 4294967295) | 0) >>> 0 : ~~+Math.ceil((tempDouble - +(~~tempDouble >>> 0)) / 4294967296) >>> 0 : 0) ], 
+  tempI64 = [ value >>> 0, (tempDouble = value, +Math.abs(tempDouble) >= 1 ? tempDouble > 0 ? (Math.min(+Math.floor(tempDouble / 4294967296), 4294967295) | 0) >>> 0 : ~~+Math.ceil((tempDouble - +(~~tempDouble >>> 0)) / 4294967296) >>> 0 : 0) ],
   HEAP32[ptr >>> 2] = tempI64[0], HEAP32[ptr + 4 >>> 2] = tempI64[1];
   break;
 
@@ -4498,9 +4498,9 @@ function __embind_register_integer(primitiveType, name, size, minRange, maxRange
   };
  } else {
   toWireType = function(destructors, value) {
-   if (value === undefined && this.name == "int") {
-    return 0;
-   }
+//   if (value === undefined && this.name == "int") {
+//    return 0;
+//   }
    checkAssertions(value, this.name);
    return value;
   };
