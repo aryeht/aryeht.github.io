@@ -27,7 +27,7 @@
       console.log('start')
       console.log(pyodide.runPython(`
 import sys
-sys.version
+import json
 import pandas as pd
 import numpy as np
 from pyodide import to_js
@@ -38,6 +38,35 @@ cryptoContext = createCrypto()
 # Enable features that you wish to use
 cryptoContext.Enable(palisade_pke.PKESchemeFeature.ENCRYPTION)
 cryptoContext.Enable(palisade_pke.PKESchemeFeature.SHE)
+
+
+print("The cryptocontext has been generated.")
+
+# Serialize cryptocontext
+cryptoContextBuffer = cryptoContext.SerializeCryptoContextToBuffer(cryptoContext) # module.SerType.JSON
+print("The cryptocontext has been serialized")
+print('type(cryptoContextBuffer)', type(cryptoContextBuffer))
+print('dir(cryptoContextBuffer)', dir(cryptoContextBuffer))
+# print('cryptoContextBuffer.toString()', cryptoContextBuffer.toString())
+# print('cryptoContextBuffer.to_py()', cryptoContextBuffer.to_py())
+print('cryptoContextBuffer.to_bytes()', json.loads(cryptoContextBuffer.to_bytes()))
+
+
+
+# Deserialize the cryptocontext
+cc = cryptoContext.DeserializeCryptoContextFromBuffer(cryptoContextBuffer) # module.SerType.JSON
+#print("cc=", cc)
+#print('type(cc)', type(cc))
+#print('dir(cc)', dir(cc))
+print("The cryptocontext has been deserialized")
+
+print('cryptoContext.Equals(cc)', cryptoContext.Equals(cc))
+
+# use deserialized CC
+print('*****delete previous CC')
+cryptoContext.delete()
+print('*****set CC from deserialized')
+cryptoContext.set(cc)
 
 # Generate a public/private key pair
 keyPair = cryptoContext.KeyGen()
@@ -130,6 +159,7 @@ print(f"Left rotation of #1 by 1: {plaintextRot1}")
 print(f"Left rotation of #1 by 2: {plaintextRot2}")
 print(f"Right rotation of #1 by 1: {plaintextRot3}")
 print(f"Right rotation of #1 by 2: {plaintextRot4}")
+
 
 cryptoContext.delete()
         `));

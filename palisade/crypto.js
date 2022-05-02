@@ -7,14 +7,14 @@ class myCrypto {
         this.cryptoContext = palisade_pke.GenCryptoContextBFVrns(plaintextModulus, palisade_pke.SecurityLevel.HEStd_128_classic, sigma, 0, depth, 0, palisade_pke.MODE.OPTIMIZED)
         console.log("cryptoContext:" + this.cryptoContext)
     }
-    toJs(v) {
+    _toJs(v) {
         let res = null;
         try { res = v.toJs(); }
         catch (e) { res = v; }
         return res;
     }
     MakeVectorInt64Clipped(vec) {
-        return palisade_pke.MakeVectorInt64Clipped(this.toJs(vec));
+        return palisade_pke.MakeVectorInt64Clipped(this._toJs(vec));
     }
     Enable(v) {
         this.cryptoContext.Enable(v);
@@ -27,7 +27,7 @@ class myCrypto {
         this.cryptoContext.EvalMultKeyGen(this.keyPair.secretKey)
     }
     EvalAtIndexKeyGen(vec) {
-        this.cryptoContext.EvalAtIndexKeyGen(this.keyPair.secretKey, this.toJs(vec))
+        this.cryptoContext.EvalAtIndexKeyGen(this.keyPair.secretKey, this._toJs(vec))
     }
     MakePackedPlaintext(v) {
         return this.cryptoContext.MakePackedPlaintext(v);
@@ -48,6 +48,18 @@ class myCrypto {
         let plaintext = this.cryptoContext.Decrypt(this.keyPair.secretKey, ciphertext);
         console.log("plaintext len=" + plaintext.GetLength() + "value:" + plaintext.GetPackedValue());
         return plaintext;
+    }
+    SerializeCryptoContextToBuffer() {
+        return palisade_pke.SerializeCryptoContextToBuffer(this.cryptoContext, palisade_pke.SerType.JSON);
+    }
+    DeserializeCryptoContextFromBuffer(cryptoContextBuffer) {
+        return palisade_pke.DeserializeCryptoContextFromBuffer(cryptoContextBuffer, palisade_pke.SerType.JSON);
+    }
+    Equals(cc) {
+        return cc.$$.ptr === this.cryptoContext.$$.ptr;
+    }
+    set(cc) {
+        this.cryptoContext = cc;
     }
     delete() {
         this.cryptoContext.delete();
