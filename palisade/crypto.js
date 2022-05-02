@@ -60,9 +60,11 @@ class myCrypto {
     }
     set(cc) {
         this.cryptoContext = cc;
+        console.log("cryptoContext updated!");
     }
     delete() {
         this.cryptoContext.delete();
         this.cryptoContext = null;
+        console.log("cryptoContext deleted!");
     }
 };
