@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.20.0/full/pyodide.js"></script>
+</head>
+
+<body>
+  Pyodide test page <br>
+  Open your browser console to see Pyodide output
+  <script type="text/javascript">
+    async function main() {
+      class myJsClass {
+        constructor() {
+            this.a = 1
+            this.b = 2
+            this.c = 3
+
+            console.log("a:" + this.a)
+        }
+        _toJs(v) {
+            let res = null;
+            try { res = v.toJs(); }
+            catch (e) { res = v; }
+            return res;
+        }
+      }
+      globalThis.myJsClass = myJsClass;
+
+
+
+      globalThis.pyodide = await loadPyodide();
+      await pyodide.loadPackage(['micropip', 'numpy', 'pandas']);
+      let namespace = pyodide.globals.get("dict")();
+      console.log('start')
+      console.log(pyodide.runPython("print(1 + 2)"));
+
+      console.log(pyodide.runPython(`
+
+from js import myJsClass
+
+
+print(f"{type(myJsClass) = }")
+
+my_instance = myJsClass.new()
+print(f"{type(my_instance) = }")
+print(f"{my_instance.a = }")
+
+
+
+class myJsClassPython:
+    def __init__(self):
+        self.js_instance = myJsClass.new()
+        print(f"{self = }")
+
+    def hello(self):
+        return 'hi'
+
+my_instance_python = myJsClassPython()
+print(f"{my_instance_python = }")
+print(f"{my_instance_python.js_instance.a = }")
+print(f"{my_instance_python.hello() = }")
+
+        `));
+    }
+    main();
+  </script>
+</body>
+
+</html>
