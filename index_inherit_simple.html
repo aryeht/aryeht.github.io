@@ -61,6 +61,29 @@ print(f"{my_instance_python = }")
 print(f"{my_instance_python.js_instance.a = }")
 print(f"{my_instance_python.hello() = }")
 
+'''
+class myJsClassMixin(myJsClass, object):
+    def __init__(self):
+        print(f"{self = }")
+
+    def hello(self):
+        return 'hi'
+
+# gives nice error message below:
+# TypeError: metaclass conflict: the metaclass of a derived class must be a (non-strict) subclass of the metaclasses of all its bases
+
+class myJsClassInherit(myJsClass):
+    def __init__(self):
+        print(f"{self = }")
+
+    def hello(self):
+        return 'hi'
+
+# gives nice error message below:
+# TypeError: cannot create 'pyodide.JsProxy' instances
+
+'''
+
         `));
     }
     main();
