@@ -25,9 +25,26 @@
       globalThis.palisade_pke = await Module();
       let namespace = pyodide.globals.get("dict")();
       console.log('start')
-      const response = await fetch("palisade/pyodide/simple_integer.py");
-      const pythonScript = await response.text();
-      console.log(pyodide.runPython(pythonScript));
+      const response = await fetch("palisade/pyodide/__pycache__/simple_integer.cpython-310.pyc");
+      const pythonBytecode = await response.arrayBuffer();
+      globalThis.pythonBytecode = pythonBytecode;
+      console.log(pyodide.runPython(`
+from js import pythonBytecode
+print(f"{type(pythonBytecode) = }")
+
+pythonBytecodeMemoryView = pythonBytecode.to_py()
+print(f"{type(pythonBytecodeMemoryView) = }")
+
+pythonBytecodeBytes = pythonBytecodeMemoryView.tobytes()
+print(f"{type(pythonBytecodeBytes) = }")
+print(f"{len(pythonBytecodeBytes) = }")
+
+
+import marshal
+
+data = marshal.loads(pythonBytecodeBytes)
+exec(data)
+      `));
       console.log(pyodide.runPython("print(1 + 2)"));
     }
     main();
