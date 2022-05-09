@@ -25,14 +25,34 @@
       globalThis.palisade_pke = await Module();
       let namespace = pyodide.globals.get("dict")();
       console.log('start')
-      const response = await fetch("palisade/pyodide/__pycache__/simple_integer.cpython-310.pyc");
-      const pythonBytecode = await response.arrayBuffer();
-      globalThis.pythonBytecode = pythonBytecode;
+      const response1 = await fetch("palisade/pyodide/__pycache__/simple_integer.cpython-310.pyc");
+      const response2 = await fetch("palisade/pyodide/__pycache__/a3.10.pyc");
+      const pythonBytecode1 = await response1.arrayBuffer();
+      const pythonBytecode2 = await response2.arrayBuffer();
+      globalThis.pythonBytecode1 = pythonBytecode1;
+      globalThis.pythonBytecode2 = pythonBytecode2;
       console.log(pyodide.runPython(`
-from js import pythonBytecode
-print(f"{type(pythonBytecode) = }")
+from js import pythonBytecode1
+print(f"{type(pythonBytecode1) = }")
 
-pythonBytecodeMemoryView = pythonBytecode.to_py()
+pythonBytecodeMemoryView = pythonBytecode1.to_py()
+print(f"{type(pythonBytecodeMemoryView) = }")
+
+pythonBytecodeBytes = pythonBytecodeMemoryView.tobytes()
+print(f"{type(pythonBytecodeBytes) = }")
+print(f"{len(pythonBytecodeBytes) = }")
+
+
+import marshal
+
+data = marshal.loads(pythonBytecodeBytes)
+exec(data)
+      `));
+      console.log(pyodide.runPython(`
+from js import pythonBytecode2
+print(f"{type(pythonBytecode2) = }")
+
+pythonBytecodeMemoryView = pythonBytecode2.to_py()
 print(f"{type(pythonBytecodeMemoryView) = }")
 
 pythonBytecodeBytes = pythonBytecodeMemoryView.tobytes()

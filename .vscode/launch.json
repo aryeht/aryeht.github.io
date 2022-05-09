@@ -14,6 +14,7 @@
         },
         {
             "type": "pwa-chrome",
+            "preLaunchTask": "runServer",
             "request": "launch",
             "name": "Debug Awesome Pyodide index.html",
             "url": "http://localhost:8000/index.html"
